@@ -12,7 +12,12 @@ const io = new Server(server, {
 const PORT = process.env.PORT || 3000;
 
 // Serve static files
-app.use(express.static(path.join(__dirname)));
+app.use(express.static(path.join(__dirname), { index: 'index.html' }));
+
+// Explicit root route fallback
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
 
 // Room storage: roomCode -> { players: [socketId, socketId], board, currentPlayer, scores, round }
 const rooms = new Map();
