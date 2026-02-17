@@ -344,7 +344,20 @@
 
   function connectSocket() {
     if (socket) return;
-    socket = io();
+    socket = io({
+      transports: ['websocket', 'polling'],
+      reconnection: true,
+      reconnectionAttempts: 5,
+    });
+
+    socket.on('connect', () => {
+      console.log('Connected to server:', socket.id);
+    });
+
+    socket.on('connect_error', (err) => {
+      console.error('Connection error:', err.message);
+      lobbyError.textContent = 'Connection failed. Retrying...';
+    });
 
     socket.on('room-created', ({ code }) => {
       roomCodeText.textContent = code;
